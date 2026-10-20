@@ -1,0 +1,56 @@
+{
+  "name": "m3uflix",
+  "productName": "M3U Flix",
+  "version": "1.0.0",
+  "description": "Player de listas M3U com interface estilo Netflix, downloads e reprodução automática do próximo episódio.",
+  "main": "electron/main.js",
+  "author": "Gabriel",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "dist": "electron-builder --win",
+    "dist:portable": "electron-builder --win portable"
+  },
+  "dependencies": {
+    "ffmpeg-static": "5.2.0",
+    "hls.js": "1.5.17",
+    "mpegts.js": "1.8.0"
+  },
+  "overrides": {
+    "webworkify-webpack": "2.1.5"
+  },
+  "devDependencies": {
+    "electron": "33.2.0",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.m3uflix.app",
+    "productName": "M3U Flix",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**",
+      "src/**",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "allowScripts": {
+    "electron@33.2.0": true,
+    "ffmpeg-static@5.2.0": true
+  }
+}

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>M3U Flix</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header id="topbar" class="topbar">
+      <div class="brand" data-focusable tabindex="0" data-nav="home">M3U<span>FLIX</span></div>
+      <nav class="nav">
+        <a href="#" data-nav="home" data-focusable>Início</a>
+        <a href="#" data-nav="series" data-focusable>Séries</a>
+        <a href="#" data-nav="movies" data-focusable>Filmes</a>
+        <a href="#" data-nav="live" data-focusable>TV ao vivo</a>
+        <a href="#" data-nav="mylist" data-focusable>Minha lista</a>
+        <a href="#" data-nav="downloads" data-focusable>Downloads <span id="dl-badge" class="badge" hidden></span></a>
+      </nav>
+      <div class="top-actions">
+        <label class="search" id="search">
+          <span class="search-icon"></span>
+          <input id="search-input" type="search" placeholder="Títulos, canais, séries" autocomplete="off" data-focusable />
+        </label>
+        <button class="icon-btn" id="btn-playlists" title="Listas M3U" data-focusable></button>
+        <button class="icon-btn" id="btn-settings" title="Configurações" data-focusable></button>
+      </div>
+    </header>
+
+    <main id="view" class="view"></main>
+
+    <div id="modal-root"></div>
+
+    <section id="player" class="player" hidden>
+      <video id="video" playsinline preload="auto"></video>
+      <div class="p-spinner" id="p-spinner"><div></div></div>
+      <div class="p-flash" id="p-flash"></div>
+
+      <div class="p-top p-chrome">
+        <button class="p-btn p-back" id="p-back" title="Voltar (Esc)"></button>
+        <div class="p-titles">
+          <div class="p-title" id="p-title"></div>
+          <div class="p-subtitle" id="p-subtitle"></div>
+        </div>
+      </div>
+
+      <button class="p-skip-intro" id="p-skip-intro">Pular abertura</button>
+
+      <div class="p-next" id="p-next" hidden>
+        <div class="p-next-thumb" id="p-next-thumb"></div>
+        <div class="p-next-info">
+          <div class="p-next-label">Próximo episódio</div>
+          <div class="p-next-title" id="p-next-title"></div>
+          <div class="p-next-actions">
+            <button class="btn btn-white p-next-play" id="p-next-play">
+              <span class="ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" /><circle class="ring-fg" id="p-next-ring" cx="18" cy="18" r="16" /></svg><b id="p-next-count">10</b></span>
+              Próximo episódio
+            </button>
+            <button class="btn btn-ghost" id="p-next-cancel">Assistir créditos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-overlay-msg" id="p-still" hidden>
+        <h2>Você ainda está assistindo?</h2>
+        <div class="row-btns">
+          <button class="btn btn-white" id="p-still-yes">Continuar assistindo</button>
+          <button class="btn btn-ghost" id="p-still-no">Voltar</button>
+        </div>
+      </div>
+
+      <div class="p-overlay-msg" id="p-error" hidden>
+        <h2>Não foi possível reproduzir</h2>
+        <p id="p-error-msg"></p>
+        <div class="row-btns">
+          <button class="btn btn-white" id="p-error-retry">Tentar novamente</button>
+          <button class="btn btn-ghost" id="p-error-next" hidden>Próximo</button>
+          <button class="btn btn-ghost" id="p-error-back">Voltar</button>
+        </div>
+      </div>
+
+      <aside class="p-panel" id="p-panel" hidden>
+        <div class="p-panel-head">
+          <h3 id="p-panel-title">Episódios</h3>
+          <button class="p-btn" id="p-panel-close"></button>
+        </div>
+        <div class="p-panel-body" id="p-panel-body"></div>
+      </aside>
+
+      <div class="p-menu" id="p-menu" hidden></div>
+
+      <div class="p-bottom p-chrome">
+        <div class="p-progress" id="p-progress">
+          <div class="p-track">
+            <div class="p-buffered" id="p-buffered"></div>
+            <div class="p-played" id="p-played"></div>
+            <div class="p-intro-mark" id="p-intro-mark" hidden></div>
+            <div class="p-thumb" id="p-thumb"></div>
+          </div>
+          <div class="p-hover-time" id="p-hover-time"></div>
+        </div>
+        <div class="p-controls">
+          <div class="p-left">
+            <button class="p-btn" id="p-play" title="Reproduzir/Pausar (Espaço)"></button>
+            <button class="p-btn" id="p-back10" title="Voltar 10s (←)"></button>
+            <button class="p-btn" id="p-fwd10" title="Avançar 10s (→)"></button>
+            <div class="p-volume">
+              <button class="p-btn" id="p-mute" title="Mudo (M)"></button>
+              <input type="range" id="p-vol" min="0" max="1" step="0.02" value="1" />
+            </div>
+            <div class="p-time" id="p-time">0:00 / 0:00</div>
+            <div class="p-live-badge" id="p-live" hidden>AO VIVO</div>
+          </div>
+          <div class="p-center-title" id="p-center-title"></div>
+          <div class="p-right">
+            <button class="p-btn" id="p-prev" title="Anterior (P)"></button>
+            <button class="p-btn" id="p-nextbtn" title="Próximo (N)"></button>
+            <button class="p-btn" id="p-episodes" title="Episódios / Canais"></button>
+            <button class="p-btn" id="p-markers" title="Marcar abertura e créditos"></button>
+            <button class="p-btn" id="p-speed" title="Velocidade"></button>
+            <button class="p-btn" id="p-download" title="Baixar"></button>
+            <button class="p-btn" id="p-fs" title="Tela cheia (F)"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
