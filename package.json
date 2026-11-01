@@ -1,7 +1,7 @@
 {
   "name": "m3uflix",
   "productName": "M3U Flix",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Player de listas M3U com interface estilo Netflix, downloads e reprodução automática do próximo episódio.",
   "main": "electron/main.js",
   "author": "Gabriel",
