@@ -336,12 +336,13 @@ export class Player {
       if (token === this.loadToken && !this.started && this.isOpen) this.fallback('Tempo esgotado ao conectar');
     }, 25000);
     const isLive = this.item.kind === 'live';
+    const lowLatencyLive = isLive && this.ctx.settings().lowLatencyLive;
     try {
       if (type === 'hls') {
         const Hls = await ensureHls();
         if (token !== this.loadToken) return;
         if (!Hls.isSupported()) throw new Error('HLS não suportado');
-        const hls = new Hls({ enableWorker: true, lowLatencyMode: isLive, maxBufferLength: 60, backBufferLength: 90 });
+        const hls = new Hls({ enableWorker: true, lowLatencyMode: lowLatencyLive, maxBufferLength: 60, backBufferLength: 90 });
         hls.on(Hls.Events.ERROR, (_e, data) => {
           if (!data.fatal) return;
           if (this.started && data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
@@ -357,7 +358,7 @@ export class Player {
         if (!mpegts.isSupported()) throw new Error('MPEG-TS não suportado');
         const p = mpegts.createPlayer(
           { type: 'mpegts', isLive, url: this.url },
-          { enableWorker: true, lazyLoad: false, liveBufferLatencyChasing: isLive, autoCleanupSourceBuffer: true }
+          { enableWorker: true, lazyLoad: false, liveBufferLatencyChasing: lowLatencyLive, autoCleanupSourceBuffer: true }
         );
         p.on(mpegts.Events.ERROR, (type, detail, info) => this.fallback(`MPEG-TS: ${type} ${detail || ''}`, { httpCode: info?.code }));
         this.mpegts = p;

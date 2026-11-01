@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS = {
   autoSkipIntro: false,
   stillWatchingAfter: 3,
   hideAdult: true,
+  lowLatencyLive: false,
   userAgent: '',
 };
 
@@ -39,6 +40,7 @@ const state = {
 let player;
 let rowObserver;
 let searchTimer;
+let playlistLoadCount = 0;
 
 // =====================================================================
 // Inicialização
@@ -66,12 +68,13 @@ async function init() {
   $$('[data-nav]').forEach((a) =>
     a.addEventListener('click', (e) => {
       e.preventDefault();
+      if (playlistLoadCount) return;
       $('#search-input').value = '';
       $('#search').classList.remove('has-value');
       navigate(a.dataset.nav);
     })
   );
-  $('[data-nav="home"].brand').addEventListener('keydown', (e) => e.key === 'Enter' && navigate('home'));
+  $('[data-nav="home"].brand').addEventListener('keydown', (e) => !playlistLoadCount && e.key === 'Enter' && navigate('home'));
 
   $('#search-input').addEventListener('input', (e) => {
     const q = e.target.value;
@@ -162,7 +165,26 @@ function deleteCachedPlaylist(pl) {
   else saveNow(`cache_${pl.id}`, null);
 }
 
-async function loadPlaylist(pl, { force = false } = {}) {
+function setTopNavigationDisabled(disabled) {
+  $('#topbar').classList.toggle('nav-disabled', disabled);
+  $$('[data-nav]').forEach((item) => {
+    item.inert = disabled;
+    item.setAttribute('aria-disabled', String(disabled));
+  });
+}
+
+async function loadPlaylist(pl, options = {}) {
+  playlistLoadCount++;
+  setTopNavigationDisabled(true);
+  try {
+    await loadPlaylistContent(pl, options);
+  } finally {
+    playlistLoadCount--;
+    setTopNavigationDisabled(playlistLoadCount > 0);
+  }
+}
+
+async function loadPlaylistContent(pl, { force = false } = {}) {
   $('#view').innerHTML = '';
   const status = el('div', { text: `Carregando "${pl.name}"...` });
   $('#view').append(el('div', { class: 'loader' }, el('div', { class: 'spinner' }), status));
@@ -1065,6 +1087,7 @@ function openSettingsModal() {
     el('h2', { text: 'Configurações' }),
     el('h3', { text: 'Reprodução' }),
     toggle('autoplayNext', 'Reproduzir próximo episódio automaticamente', 'Inicia o próximo episódio sozinho ao chegar nos créditos.'),
+    toggle('lowLatencyLive', 'Baixa latência nos canais ao vivo', 'Reduz o atraso da transmissão, mas pode causar mais instabilidade. Desativado por padrão.'),
     number('countdown', 'Contagem regressiva (segundos)', 'Tempo exibido no cartão "Próximo episódio".', 3, 60),
     number('creditsSeconds', 'Mostrar "Próximo episódio" quando faltar (segundos)', 'Pode ser ajustado por série no player (ícone de marcador).', 0, 600),
     number('stillWatchingAfter', 'Perguntar "Ainda está assistindo?" após N episódios seguidos', '0 desativa.', 0, 50),
