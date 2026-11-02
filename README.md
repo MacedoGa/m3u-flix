@@ -11,7 +11,8 @@ preparado para Smart TV e Android (a interface é web pura, sem framework).
 - **Interface estilo Netflix**: destaque (hero), linhas horizontais, "Continuar assistindo", "Minha lista",
   busca, modal de detalhes com temporadas/episódios.
 - **Player completo**: HLS (`hls.js`), MPEG-TS (`mpegts.js`) e MP4/WebM nativo, com troca automática de
-  motor quando um falha; retoma de onde parou; velocidade; tela cheia; atalhos de teclado.
+  motor quando um falha; baixa latência configurável nos canais ao vivo (desativada por padrão); retoma
+  de onde parou; velocidade; tela cheia; atalhos de teclado.
 - **Próximo episódio automático**: cartão "Próximo episódio" com contagem regressiva nos créditos,
   passa de temporada sozinho, e pergunta "Você ainda está assistindo?" após N episódios seguidos.
 - **Pular abertura**: botão padrão (configurável) e **marcações por série** (início/fim da abertura e início
